@@ -41,7 +41,13 @@ module.exports = (app) => {
   });
 
   app.get("/api/workouts/range", (req, res) => {
-    db.Workout.find({})
+    db.Workout.aggregate([
+      {
+        $addFields: {
+          totalDuration: { $sum: "$exercises.duration" },
+        }
+      },
+    ])
       .then((dbWorkout) => {
         res.json(dbWorkout);
       })
